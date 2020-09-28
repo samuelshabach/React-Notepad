@@ -3,9 +3,10 @@ import React , { Component } from 'react';
 import './App.css';
 
 import Header from './components/header/header.component';
-import SignInAndSignUpPage from './pages/SignInAndSignUp/sign-in-and-sign-up'
+import SignInAndSignUpPage from './pages/SignInAndSignUp/sign-in-and-sign-up';
+import AddNotesPage from './pages/AddNotesPage/add-notes-page'
 import { Switch, Route } from 'react-router-dom';
-import { auth } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 
 class App extends Component {
@@ -20,12 +21,10 @@ class App extends Component {
   unsubscribeFromAuth = null
 
   componentDidMount() {
-    this.unsubscribeFromAuth = auth.onAuthStateChanged( user => {
-      this.setState({ currentUser: user });
-
-      console.log(user);
-    })
-  }
+    this.unsubscribeFromAuth = auth.onAuthStateChanged( async userAuth => {
+      createUserProfileDocument(user);
+    });
+  };
 
   componentWillUnmount() {
     this.unsubscribeFromAuth();
@@ -37,6 +36,7 @@ class App extends Component {
           <Header currentUser={this.state.currentUser} />
           <Switch>
             <Route path='/signin' component={SignInAndSignUpPage} />
+            <Route path='/addnotes' component={AddNotesPage} />
           </Switch>
         </div>
       )
